@@ -1,6 +1,5 @@
-// client/pages/admin.tsx
 import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+import { apiClient } from '@/lib/api';
 
 type Client = {
   id: string;
@@ -14,57 +13,59 @@ export default function Admin() {
   const [clients, setClients] = useState<Client[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  async function fetchClients() {
+  const loadClients = async () => {
     try {
       const token = localStorage.getItem('token') || '';
-      const data = await api.get('/api/client/admin/clients/', token);
+      const data = await apiClient.get('/api/clients/', token);
       setClients(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load clients');
+    } catch (e: any) {
+      setError(e.message);
     }
-  }
+  };
 
-  async function toggleBlacklist(id: string) {
+  const toggleBlacklist = async (id: string, current: boolean) => {
     try {
       const token = localStorage.getItem('token') || '';
-      await api.post(`/api/client/admin/clients/${id}/blacklist/`, {}, token);
-      await fetchClients();
-    } catch (err: any) {
-      setError(err.message || 'Failed to toggle blacklist');
+      await apiClient.post(
+        `/api/clients/${id}/blacklist/`,
+        { is_blacklisted: !current },
+        token
+      );
+      await loadClients();
+    } catch (e: any) {
+      setError(e.message);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchClients();
+    loadClients();
   }, []);
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Admin Panel</h1>
-
-      {error && <p className="text-red-600 mb-3">{error}</p>}
-
-      <table className="min-w-full border border-gray-300">
+      <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+      <table className="w-full border-collapse border border-gray-300">
         <thead>
-          <tr className="bg-gray-100">
-            <th className="px-3 py-2 border">Email</th>
-            <th className="px-3 py-2 border">Name</th>
-            <th className="px-3 py-2 border">Blacklisted</th>
-            <th className="px-3 py-2 border">Action</th>
+          <tr>
+            <th className="border p-2">Email</th>
+            <th className="border p-2">Name</th>
+            <th className="border p-2">Admin</th>
+            <th className="border p-2">Blacklisted</th>
+            <th className="border p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
           {clients.map((c) => (
             <tr key={c.id}>
-              <td className="px-3 py-2 border">{c.email}</td>
-              <td className="px-3 py-2 border">{c.name}</td>
-              <td className="px-3 py-2 border">
-                {c.is_blacklisted ? 'Yes' : 'No'}
-              </td>
-              <td className="px-3 py-2 border">
+              <td className="border p-2">{c.email}</td>
+              <td className="border p-2">{c.name}</td>
+              <td className="border p-2">{c.is_admin ? 'Yes' : 'No'}</td>
+              <td className="border p-2">{c.is_blacklisted ? 'Yes' : 'No'}</td>
+              <td className="border p-2">
                 <button
-                  onClick={() => toggleBlacklist(c.id)}
-                  className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
+                  className="px-3 py-1 bg-blue-500 text-white rounded"
+                  onClick={() => toggleBlacklist(c.id, c.is_blacklisted)}
                 >
                   {c.is_blacklisted ? 'Unblacklist' : 'Blacklist'}
                 </button>
