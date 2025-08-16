@@ -1,69 +1,110 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { api } from '@/lib/api'
+// client/pages/dashboard.tsx
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
 
-type Txn = { id:number; type:'deposit'|'withdraw'; amount:string; created_at:string }
+type Transaction = {
+  id: string;
+  type: 'deposit' | 'withdraw';
+  amount: number;
+  created_at: string;
+};
+
 export default function Dashboard() {
-  const [balance, setBalance] = useState<string>('0.00')
-  const [txns, setTxns] = useState<Txn[]>([])
-  const [amt, setAmt] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const [balance, setBalance] = useState<number>(0);
+  const [txns, setTxns] = useState<Transaction[]>([]);
+  const [amount, setAmount] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
 
-  const load = async () => {
+  const token =
+    typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
+
+  async function load() {
     try {
-      const data = await api('/api/banking/balance/')
-      setBalance(data.balance)
-      setTxns(data.transactions || [])
+      const data = await api.get('/api/banking/balance/', token);
+      setBalance(data.balance);
+      setTxns(data.transactions || []);
     } catch (e: any) {
-      setError(e.message)
+      setError(e.message || 'Failed to load balance');
     }
   }
 
-  useEffect(() => { load() }, [])
-
-  const act = async (path: string) => {
+  async function handleDeposit() {
     try {
-      setError(null)
-      await api(`/api/banking/${path}`, { method: 'POST', body: JSON.stringify({ amount: amt }) })
-      setAmt('')
-      await load()
+      await api.post('/api/banking/deposit/', { amount }, token);
+      setAmount(0);
+      await load();
     } catch (e: any) {
-      setError(e.message)
+      setError(e.message || 'Deposit failed');
     }
   }
+
+  async function handleWithdraw() {
+    try {
+      await api.post('/api/banking/withdraw/', { amount }, token);
+      setAmount(0);
+      await load();
+    } catch (e: any) {
+      setError(e.message || 'Withdrawal failed');
+    }
+  }
+
+  useEffect(() => {
+    load();
+  }, []);
 
   return (
-    <div className="container space-y-4">
-      <div className="card space-y-2">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <div className="space-x-2">
-            <a className="underline" href="/admin">Admin</a>
-            <button className="btn" onClick={() => { localStorage.removeItem('token'); router.push('/login') }}>Logout</button>
-          </div>
-        </div>
-        {error && <div className="text-red-600">Error: {error}</div>}
-        <div>Balance: <span className="font-mono">${balance}</span></div>
-        <div className="flex gap-2">
-          <input className="input" placeholder="Amount" value={amt} onChange={e=>setAmt(e.target.value)} />
-          <button className="btn bg-green-600 text-white" onClick={() => act('deposit')}>Deposit</button>
-          <button className="btn bg-red-600 text-white" onClick={() => act('withdraw')}>Withdraw</button>
-        </div>
+    <div className="p-6">
+      <h1 className="text-xl font-bold mb-4">Dashboard</h1>
+
+      {error && <p className="text-red-600 mb-3">{error}</p>}
+
+      <p className="mb-4">
+        Balance: <strong>${balance.toFixed(2)}</strong>
+      </p>
+
+      <div className="flex mb-4">
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(Number(e.target.value))}
+          className="border p-2 rounded mr-2"
+          placeholder="Amount"
+        />
+        <button
+          onClick={handleDeposit}
+          className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-2"
+        >
+          Deposit
+        </button>
+        <button
+          onClick={handleWithdraw}
+          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+        >
+          Withdraw
+        </button>
       </div>
-      <div className="card">
-        <h2 className="text-xl font-semibold mb-2">Transactions</h2>
-        <div className="space-y-1">
-          {txns.map(t => (
-            <div key={t.id} className="flex justify-between border-b py-1 text-sm">
-              <span className="uppercase">{t.type}</span>
-              <span className="font-mono">${t.amount}</span>
-              <span>{new Date(t.created_at).toLocaleString()}</span>
-            </div>
+
+      <h2 className="text-lg font-bold mb-2">Transactions</h2>
+      <table className="min-w-full border border-gray-300">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="px-3 py-2 border">Type</th>
+            <th className="px-3 py-2 border">Amount</th>
+            <th className="px-3 py-2 border">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {txns.map((t) => (
+            <tr key={t.id}>
+              <td className="px-3 py-2 border">{t.type}</td>
+              <td className="px-3 py-2 border">${t.amount.toFixed(2)}</td>
+              <td className="px-3 py-2 border">
+                {new Date(t.created_at).toLocaleString()}
+              </td>
+            </tr>
           ))}
-          {txns.length === 0 && <div className="text-gray-500">No transactions yet.</div>}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
-  )
+  );
 }
