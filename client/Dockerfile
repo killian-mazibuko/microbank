@@ -24,7 +24,6 @@
     
     # Ensure public exists (even if empty)
     RUN mkdir -p ./public
-    COPY --from=builder /app/public ./public || true
     
     EXPOSE 3000
     CMD ["npm", "start"]
