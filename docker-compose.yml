@@ -5,47 +5,52 @@ services:
     image: postgres:15
     container_name: microbank-db
     environment:
-      POSTGRES_DB: microbank
-      POSTGRES_USER: microbank
-      POSTGRES_PASSWORD: microbank123
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - '5432:5432'
     networks:
       - microbank-network
+
   client-service:
     build: ./services/client-service
     container_name: client-service
-    ports:
-      - '8000:8000'
     depends_on:
       - db
     env_file: .env
     networks:
       - microbank-network
+    ports:
+      - '8000:8000'
     command: sh -c "python manage.py migrate && python manage.py seed_admin && gunicorn client_service.wsgi:application --bind 0.0.0.0:8000 --workers 3"
 
   banking-service:
     build: ./services/banking-service
     container_name: banking-service
-    ports:
-      - '8001:8001'
     depends_on:
       - db
     env_file: .env
     networks:
       - microbank-network
+    ports:
+      - '8001:8001'
+    command: sh -c "python manage.py migrate && gunicorn banking_service.wsgi:application --bind 0.0.0.0:8001 --workers 3"
 
   client:
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     container_name: client
-    ports:
-      - '3000:3000'
-    env_file: .env
     depends_on:
       - client-service
       - banking-service
+    env_file: .env
     networks:
       - microbank-network
+    ports:
+      - '3000:3000'
+    command: sh -c "npm install && npm run build && npm start"
 
 networks:
   microbank-network:
