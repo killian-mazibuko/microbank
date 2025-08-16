@@ -1,38 +1,71 @@
-import { useState } from 'react'
-import { useRouter } from 'next/router'
-import { api, API_BASE } from '@/lib/api'
+// client/pages/register.tsx
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { api } from '@/lib/api';
 
 export default function Register() {
-  const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const submit = async (e: any) => {
-    e.preventDefault()
-    setError(null)
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+
     try {
-      await api('/api/client/register/', { method: 'POST', body: JSON.stringify({ email, name, password }) })
-      router.push('/login')
-    } catch (e: any) {
-      setError(e.message)
+      await api.post('/api/client/register/', { email, name, password });
+      router.push('/login'); // redirect after successful registration
+    } catch (err: any) {
+      setError(err.message || 'Registration failed');
     }
   }
 
   return (
-    <div className="container">
-      <div className="card space-y-4">
-        <h1 className="text-2xl font-bold">Register</h1>
-        {error && <div className="text-red-600">{error}</div>}
-        <form onSubmit={submit} className="space-y-3">
-          <input className="input" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} />
-          <input className="input" placeholder="Name" value={name} onChange={e=>setName(e.target.value)} />
-          <input type="password" className="input" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
-          <button className="btn bg-black text-white" type="submit">Create account</button>
-        </form>
-        <a className="underline" href="/login">Have an account? Log in</a>
-      </div>
+    <div className="h-screen flex items-center justify-center bg-gray-50">
+      <form
+        onSubmit={handleRegister}
+        className="bg-white p-6 rounded-xl shadow-md w-80"
+      >
+        <h1 className="text-lg font-bold mb-4">Register</h1>
+
+        {error && <p className="text-red-600 mb-3">{error}</p>}
+
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full mb-3 p-2 border rounded"
+          required
+        />
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full mb-3 p-2 border rounded"
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full mb-3 p-2 border rounded"
+          required
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+        >
+          Register
+        </button>
+      </form>
     </div>
-  )
+  );
 }
