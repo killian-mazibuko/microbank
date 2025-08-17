@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.urls import resolve
 import os
 
-INTERNAL_TOKEN = os.environ.get("INTERNAL_TOKEN", "changeme")
+INTERNAL_TOKEN = os.environ.get("INTERNAL_TOKEN", "supersecretinternal")
 
 EXEMPT_PATHS = [
     "health",
