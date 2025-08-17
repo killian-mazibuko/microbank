@@ -96,7 +96,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 JWT_SECRET = os.environ.get("JWT_SECRET", "supersecretjwt")
-INTERNAL_TOKEN = os.environ.get("INTERNAL_TOKEN", "changeme")
+INTERNAL_TOKEN = os.environ.get("INTERNAL_TOKEN", "supersecretinternal")
 RABBITMQ = {
     "HOST": os.environ.get("RABBITMQ_HOST", "rabbitmq"),
     "USER": os.environ.get("RABBITMQ_USER", "guest"),
