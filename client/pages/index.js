@@ -187,6 +187,7 @@ export default function Home() {
                 onClick={() => {
                   setToken(null);
                   setMe(null);
+                  localStorage.removeItem('token');
                 }}
               >
                 Log out
