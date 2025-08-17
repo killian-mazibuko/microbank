@@ -34,7 +34,7 @@ export default function Home() {
     });
     const j = await r.json();
     setToken(j.token);
-    setLocalStorage('token', j.token);
+    localStorage.setItem('token', j.token);
     console.log('Token: ', j.token);
   }
   async function fetchMe() {
@@ -104,7 +104,7 @@ export default function Home() {
     }
     if (token) {
       fetchMe();
-      fetchBalance();
+   s   fetchBalance();
       loadTxns();
     }
   }, [token]);
