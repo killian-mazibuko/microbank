@@ -34,6 +34,7 @@ export default function Home() {
     });
     const j = await r.json();
     setToken(j.token);
+    console.log('Token: ', j.token);
   }
   async function fetchMe() {
     const r = await fetch(`${CLIENT_API}/client/me`, {
