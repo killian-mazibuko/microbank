@@ -37,7 +37,6 @@ def login_view(request: HttpRequest):
     token = make_token(user)
     return JsonResponse({"token": token})
 
-@csrf_exempt
 @auth_required
 def me(request: HttpRequest):
     uid = request.user_payload.get("sub")

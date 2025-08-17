@@ -3,7 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("JWT_SECRET", "changeme")
+SECRET_KEY = os.environ.get("JWT_SECRET", "supersecretjwt")
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
@@ -95,7 +95,7 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-JWT_SECRET = os.environ.get("JWT_SECRET", "changeme")
+JWT_SECRET = os.environ.get("JWT_SECRET", "supersecretjwt")
 INTERNAL_TOKEN = os.environ.get("INTERNAL_TOKEN", "changeme")
 RABBITMQ = {
     "HOST": os.environ.get("RABBITMQ_HOST", "rabbitmq"),
