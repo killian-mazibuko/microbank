@@ -34,6 +34,7 @@ export default function Home() {
     });
     const j = await r.json();
     setToken(j.token);
+    setLocalStorage('token', j.token);
     console.log('Token: ', j.token);
   }
   async function fetchMe() {
@@ -97,6 +98,10 @@ export default function Home() {
   }
 
   useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
+    }
     if (token) {
       fetchMe();
       fetchBalance();

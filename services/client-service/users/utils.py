@@ -1,7 +1,7 @@
 import os, jwt, datetime
 from django.http import JsonResponse
 
-JWT_SECRET = os.environ.get("JWT_SECRET", "changeme")
+JWT_SECRET = os.environ.get("JWT_SECRET", "supersecretjwt")
 
 def make_token(user):
     payload = {
