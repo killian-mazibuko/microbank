@@ -104,7 +104,7 @@ export default function Home() {
     }
     if (token) {
       fetchMe();
-   s   fetchBalance();
+      fetchBalance();
       loadTxns();
     }
   }, [token]);
