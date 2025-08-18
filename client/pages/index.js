@@ -33,10 +33,20 @@ export default function Home() {
       body: JSON.stringify({ username, password }),
     });
     const j = await r.json();
-    setToken(j.token);
-    localStorage.setItem('token', j.token);
-    console.log('Token: ', j.token);
+    if (!j.token) {
+      alert('Login failed: ' + (j.detail || 'Invalid credentials'));
+      if (localStorage.getItem('token')) {
+        localStorage.removeItem('token'); // Clear token if login fails
+      }
+      setToken(null);
+      setMe(null);
+    } else {
+      localStorage.setItem('token', j.token);
+      console.log('Token: ', j.token);
+      setToken(j.token);
+    }
   }
+
   async function fetchMe() {
     const r = await fetch(`${CLIENT_API}/client/me`, {
       headers: authHeaders(),
