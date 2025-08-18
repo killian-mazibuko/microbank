@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.forms.models import model_to_dict
 from .serializers import RegisterSerializer, UserSerializer
+from django.utils.decorators import method_decorator
+
 from .utils import make_token, auth_required
 
 User = get_user_model()
