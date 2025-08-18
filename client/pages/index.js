@@ -41,6 +41,7 @@ export default function Home() {
       setToken(null);
       setMe(null);
     } else {
+      checkBlacklisted();
       localStorage.setItem('token', j.token);
       console.log('Token: ', j.token);
       setToken(j.token);
@@ -105,6 +106,21 @@ export default function Home() {
       body: JSON.stringify({ user_id: id, is_blacklisted }),
     });
     await loadClients();
+  }
+
+  async function checkBlacklisted( ) {
+    const r = await fetch(`${CLIENT_API}/client/me`, {
+      headers: authHeaders(),
+    });
+    const j = await r.json();
+    if (j.is_blacklisted) {
+      alert('You are blacklisted');
+      setToken(null);
+      setMe(null);
+      if (localStorage.getItem('token')) {
+        localStorage.removeItem('token); // Clear token if blacklisted
+      }
+    }
   }
 
   useEffect(() => {
