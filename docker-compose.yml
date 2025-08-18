@@ -28,7 +28,7 @@ services:
       - RABBITMQ_VHOST=${RABBITMQ_VHOST}
       - CLIENT_SERVICE_URL=${CLIENT_SERVICE_URL}
     volumes:
-      - client_db:/app/db.sqlite3
+      - ./db.sqlite3:/app/db.sqlite3
       - static_volume:/app/staticfiles
     depends_on:
       rabbitmq:
@@ -49,7 +49,7 @@ services:
       - RABBITMQ_VHOST=${RABBITMQ_VHOST}
       - CLIENT_SERVICE_URL=${CLIENT_SERVICE_URL}
     volumes:
-      - banking_db:/app/db.sqlite3
+      - ./db.sqlite3:/app/db.sqlite3
       - static_volume:/app/staticfiles
     depends_on:
       rabbitmq:
