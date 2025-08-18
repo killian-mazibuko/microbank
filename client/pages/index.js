@@ -99,7 +99,7 @@ export default function Home() {
     setClients(j.results || []);
   }
   async function toggleBlacklist(id, is_blacklisted) {
-    const r = await fetch(`${API}/client/admin/blacklist`, {
+    const r = await fetch(`${CLIENT_API}/client/admin/blacklist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ user_id: id, is_blacklisted }),
