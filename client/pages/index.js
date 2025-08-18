@@ -108,7 +108,7 @@ export default function Home() {
     await loadClients();
   }
 
-  async function checkBlacklisted( ) {
+  async function checkBlacklisted() {
     const r = await fetch(`${CLIENT_API}/client/me`, {
       headers: authHeaders(),
     });
@@ -118,7 +118,7 @@ export default function Home() {
       setToken(null);
       setMe(null);
       if (localStorage.getItem('token')) {
-        localStorage.removeItem('token); // Clear token if blacklisted
+        localStorage.removeItem('token'); //Clear token if blacklisted
       }
     }
   }
