@@ -15,10 +15,8 @@ export default function Home() {
   const [amount, setAmount] = useState('10.00');
   const [txns, setTxns] = useState([]);
   const [clients, setClients] = useState([]);
-  const csrftoken = getCookie('csrftoken');
 
-  const authHeaders = () =>
-    token ? { Authorization: 'Bearer ' + token, 'X-CSRFToken': csrftoken } : {};
+  const authHeaders = () => (token ? { Authorization: 'Bearer ' + token } : {});
 
   async function register() {
     await fetch(`${CLIENT_API}/client/register`, {

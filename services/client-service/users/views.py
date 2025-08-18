@@ -58,8 +58,8 @@ def list_clients(request: HttpRequest):
     data = [UserSerializer(u).data for u in User.objects.all().order_by("id")]
     return JsonResponse({"results": data})
 
+@method_decorator(csrf_exempt, name='dispatch')
 @auth_required
-@csrf_exempt
 def toggle_blacklist(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"detail":"Method not allowed"}, status=405)
