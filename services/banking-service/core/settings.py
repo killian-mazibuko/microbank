@@ -36,6 +36,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://20.63.49.65:3000"
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://20.63.49.65:3000",
+    "http://localhost:3000",
+]
+
 ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
